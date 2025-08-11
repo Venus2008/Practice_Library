@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Author : {{author.author.first_name}} {{author.author.last_name}}</h2>
+
+<p> Date of Birth : {{author.author.date_of_birth}} </p>
+
+<h4>Books</h4> 
+
+<h5> Book name : {{author.title}} </h5>
+
+<p>Book summary</p>
+
+<p>{{author.summary}}</p>
+
+{% endblock %}

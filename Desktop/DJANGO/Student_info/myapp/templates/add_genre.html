@@ -1,0 +1,27 @@
+{% extends 'base.html'%}
+{% block content %}
+
+<h1>Add Genre</h1>
+
+<!-- Add Genre Form -->
+<form method="post" action="">
+    {% csrf_token %}
+    <label for="id_name">Genre Name:</label>
+    <input type="text" name="name" id="id_name" required>
+    <button type="submit">Add Genre</button>
+</form>
+
+<hr>
+
+<!-- List of existing genres -->
+<h2>Existing Genres</h2>
+<ul>
+    {% for genre in genres %}
+        <li>{{ genre.name }}</li>
+    {% empty %}
+        <li>No genres yet.</li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Authors List</h1>
+  {% if author_detail %}
+    <ul>
+      {% for x in author_detail %}
+      <li><a href="{% url 'author-wise-detail' x.pk %}"> {{ x.first_name }} {{x.last_name}}</a>
+        ({{x.date_of_birth}})
+      </li>
+
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}
+  
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Loan Book</h2>
+<p><strong>Book:</strong> {{ book_borrow.book.title }}</p>
+<p><strong>Borrower:</strong> {{ request.user.get_full_name|default:request.user.username }}</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div >
+      {{ form.as_p }}
+
+        {% if form.due_back.errors %}
+            <div class="text-danger">
+                <strong>⚠️ {{ form.due_back.errors.0 }}</strong>
+            </div>
+        {% endif %}
+    </div>
+<br>
+    <button type="submit">Confirm Loan</button>
+</form>
+{% endblock %}
