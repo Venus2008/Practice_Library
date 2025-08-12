@@ -168,6 +168,7 @@ def add_book(request):
         summary=request.POST.get('summary')
         isbn=request.POST.get('isbn')
         genre_ids = request.POST.getlist('genre')
+        image=request.FILES.get('image')
         try:
             author = Author.objects.get(id=author_id)
         except Author.DoesNotExist:
@@ -182,18 +183,63 @@ def add_book(request):
             summary=summary,
             isbn=isbn,
             author=author,
+            image=image,
         )
         if genre_ids:
             book.genre.set(genre_ids) 
 
         messages.success(request, "Book added successfully!")
         return redirect ('add-book')
-    queryset=Book.objects.all()
-    genres=Genre.objects.all()
-    authors=Author.objects.all()
-    context={'book':queryset,'genres':genres,'authors':authors}
-    return render (request, 'add_book.html', context)
+    books=Book.objects.all()
+    queryset_genres=Genre.objects.all()
+    queryset_authors=Author.objects.all()
+    context={'books':books,'genres':queryset_genres,'authors':queryset_authors,'is_edit':False,'book':None}
+    return render (request, 'book_form.html', context)
 
+@login_required
+def delete_book(request,id):
+    queryset=Book.objects.get(id=id)
+    BookInstance.objects.filter(book=id).delete()
+    queryset.delete()
+    return redirect ('books')
+
+@login_required
+def edit_book(request,id):
+    queryset=get_object_or_404(Book,id=id)
+    if request.method =='POST':
+        title=request.POST.get('title')
+        author_id = request.POST.get('author_id')
+        language=request.POST.get('language')
+        summary=request.POST.get('summary')
+        isbn=request.POST.get('isbn')
+        genre_ids = request.POST.getlist('genre')
+        image=request.FILES.get('image')
+        try:
+            author = get_object_or_404(Author,id=author_id)
+        except Author.DoesNotExist:
+            messages.error(request, "Author not found.")
+            return redirect('add-book')
+        
+        queryset.title=title
+        queryset.author=author
+        queryset.language=language
+        queryset.summary=summary
+        queryset.isbn=isbn
+        queryset.genre.set(genre_ids)
+        if image:
+            queryset.image=image
+        queryset.save()
+
+        messages.success(request, "Book updated successfully!")
+        return redirect ('books')
+    queryset_author=Author.objects.all()
+    queryset_genre=Genre.objects.all()
+    return render(request, 'book_form.html', {
+        'book': queryset,
+        'authors': queryset_author,
+        'genres': queryset_genre,
+        'is_edit':True
+    })
 
 @login_required
 def add_author(request):
@@ -219,15 +265,12 @@ def add_author(request):
 
 @login_required
 def add_genre(request):
-    print(1)
     if request.method=='POST':
-      print(2)
       name=request.POST.get('name')
       if name:
         Genre.objects.create(name=name)
       return redirect ('add-genre')
       
-    
     queryset=Genre.objects.all()
     return render(request, 'add_genre.html', {'genres': queryset})
     

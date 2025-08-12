@@ -1,0 +1,72 @@
+{% extends 'base.html'%}
+{% block content%}
+{%if is_edit %}
+<h2> Edit Book </h2>
+{% else %}
+<h2> Add Book </h2>
+{% endif %}
+<form method="POST" enctype="multipart/form-data" action="{% if is_edit %}{% url 'edit-book' book.id%}
+{% else %}{% url 'add-book' %}{% endif %}">
+  {% csrf_token %}
+
+  <label>Title:</label>
+  <input type="text" name="title" value="{{ book.title|default_if_none:'' }}" required><br>
+
+  <label>Author:</label>
+    <select name="author_id" placeholder="Select Author" required>
+       <option value=""> Select Author </option>
+        {% for author in authors %}
+            <option value="{{ author.id }}"
+                {% if book and author.id == book.author.id %}selected{% endif %}>
+                {{ author }}
+            </option>
+        {% endfor %}
+    </select>
+  <br>
+    <a href="{% url 'add-author' %}"> Add Author </a>
+
+  <label>Language:</label>
+  <input type="text" name="language" value="{{ book.language|default_if_none:'' }}" required><br>
+
+  <label>Summary:</label>
+  <textarea name="summary" required>{{ book.summary|default_if_none:'' }}</textarea><br>
+
+  <label>ISBN:</label>
+  <input type="text" name="isbn" value="{{ book.isbn|default_if_none:'' }}" required><br>
+
+  <label>Genres:</label>
+  <select name="genre" multiple required>
+    {% for genre in genres %}
+      <option value="{{genre.id}}"
+        {%if book and genre.id == book.genre.id.all %}selected{% endif %}>
+        {{ genre }}
+      </option>
+    {% endfor %}
+  </select>
+  <br>
+  <a href="{% url 'add-genre' %}"> Add a Genre </a>
+  <br>
+
+  
+  <label>Add Image</label>
+  <input type="file" name="image" placeholder="Choose File">
+
+  {% if is_edit%}
+  <button type="edit"> Edit Book </button>
+  {% else %}
+  <button type="submit"> Add Book </button>
+  {% endif %}
+</form>
+
+<hr>
+<h2>Books in Library</h2>
+<ul>
+  {% if not is_edit%}
+  {% for item in books %}
+    <li><strong>{{ item.title }}</strong> by {{ item.author }}</li>
+  {% empty %}
+    <li>No books found.</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{%endblock%}

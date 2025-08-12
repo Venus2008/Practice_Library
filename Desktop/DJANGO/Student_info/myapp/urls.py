@@ -30,5 +30,8 @@ urlpatterns = [
     path('borrow/<uuid:pk>',views.BookLoanView.as_view(), name='loan-book'),
     path('addbook/', views.add_book, name='add-book'),
     path('addgenre/',views.add_genre, name='add-genre'),
-    path('addauthor/',views.add_author, name='add-author')
+    path('addauthor/',views.add_author, name='add-author'),
+    path('deletebook/<id>',views.delete_book, name='delete-book'),
+    path('editbook/<id>',views.edit_book, name='edit-book'),
+
 ]
